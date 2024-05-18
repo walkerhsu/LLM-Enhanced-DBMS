@@ -1,8 +1,8 @@
-# LLM-Enhanced-DBMS-Importer
+# LLM-Enhanced-DBMS
 
 ## Overview
 
-**LLM-Enhanced-DBMS-Importer** is a project that integrates a Large Language Model (LLM) into a Database Management System (DBMS) to facilitate the extraction of important data from documents and automate the insertion of this data into the database. This is achieved by introducing a new SQL statement that simplifies the process.
+**LLM-Enhanced-DBMS** is a project that integrates a Large Language Model (LLM) into a Database Management System (DBMS) to facilitate the extraction of important data from documents and automate the insertion of this data into the database. This is achieved by introducing a new SQL statement that simplifies the process.
 
 ## Features
 
@@ -24,7 +24,7 @@
 1. Clone the repository:
     ```bash
     git clone https://github.com/yourusername/LLM-Enhanced-DBMS-Importer.git
-    cd LLM-Enhanced-DBMS-Importer
+    cd LLM-Enhanced-DBMS
     ```
 
 2. Create a virtual environment and activate it:
