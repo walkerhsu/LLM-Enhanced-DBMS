@@ -8,7 +8,7 @@ from hotkeys import HotKeys
 class MainWindow:
     def __init__(self, master: ctk.CTk) -> None:
         self.master = master
-        self.master.title("CustomTkinter App")
+        self.master.title("LLM-Enhanced-DBMS")
         self.hotkeys = HotKeys(self.master)
 
         # self.label = LabelWidget(self.master, "Enter some text:")
