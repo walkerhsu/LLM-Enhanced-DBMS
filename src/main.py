@@ -1,4 +1,4 @@
-from gui.main_window import MainWindow
+from UI.gui.main_window import MainWindow
 import customtkinter as ctk
 
 if __name__ == "__main__":

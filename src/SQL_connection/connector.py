@@ -7,12 +7,14 @@ import mysql.connector
 
 
 class SQLConnector:
-    def __init__(self) -> None:
+    def __init__(self, config='sql_config.json') -> None:
+        self.config = config
         self.get_sql_config()
         self.create_database()
+        # pass
 
     def get_sql_config(self):
-        with open('sql_config.json') as f:
+        with open(self.config) as f:
             config = json.load(f)
 
         self.host = config['host']
