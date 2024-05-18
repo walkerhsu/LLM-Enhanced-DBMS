@@ -1,2 +1,5 @@
 customtkinter
 mysql-connector-python==8.0.33
+SpeechRecognition
+python-dotenv
+openai
