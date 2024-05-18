@@ -15,7 +15,6 @@ if __name__ == "__main__":
     openAI_client = OpenAI(
         api_key=api_key
     )
-        
-    root = ctk.CTk()
-    app = MainWindow(root, openAI_client)
-    root.mainloop()
+    
+    app = MainWindow(openAI_client)
+    app.mainloop()
