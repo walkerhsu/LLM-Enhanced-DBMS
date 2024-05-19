@@ -6,8 +6,8 @@ from openai import OpenAI
 from hotkeys import HotKeys
 from SQL_connection.connector import SQLConnector
 from UI.gui.file_dialog import FileDialog
-from UI.gui.user_input import UserInput
-from UI.gui.chatBox import ChatBox
+from UI.gui.chat.user_input import UserInput
+from UI.gui.chat.chatBox import ChatBox
 from UI.gui.Logo import Logo
 
 
@@ -30,8 +30,16 @@ class MainWindow(ctk.CTk):
         self.grid_columnconfigure(2, weight=1, minsize=120)
 
         self.hotkeys = HotKeys(self)
-        self.connector = SQLConnector(config='SQL_Connection/sql_config.json')
         self.Logo = Logo(self)
+        self.connector = SQLConnector(config='SQL_Connection/sql_config.json')
+
+        self.segmented_values = ["Chat Playground", "Upload Data"]
+        self.segemented_button_var = ctk.StringVar(value="Chat Playground")
+        self.segemented_button = ctk.CTkSegmentedButton(self, values=self.segmented_values, font=(self.font, 16),
+                                                            command=self.segmented_button_callback,
+                                                            variable=self.segemented_button_var)
+        self.segemented_button.grid(row=0, column=1, padx=20, pady=20)
+    
         self.fileDialog = FileDialog(self, self.openAI_client)
         self.chatBox = ChatBox(self)
         self.input = UserInput(self, self.openAI_client)
@@ -42,6 +50,28 @@ class MainWindow(ctk.CTk):
         self.submitButton = ctk.CTkButton(self, text="Send", command=self.submit, font=(self.font, 16), height=20, width=100)
         self.submitButton.grid(row=2, column=2, padx=(15, 20), pady=2, sticky='w')
         self.input.userInput.bind("<Return>", self.submit)  # Send message on Enter key press
+
+    def segmented_button_callback(self, value):
+        print("segmented button clicked:", value)
+        for segment_value in self.segmented_values:
+            if value == segment_value:
+                if value == "Chat Playground":
+                    # remove uploading grid
+                    self.dialogButon.grid_remove()
+                    # set chatting grid
+                    self.chatBox.grid()
+                    self.input.set_mul_grids()
+                    self.submitButton.grid()
+                elif value == "Upload Data":
+                    # remove chatting grid
+                    self.chatBox.grid_remove()
+                    self.input.remove_mul_grids()
+                    self.submitButton.grid_remove()
+                    # set uploading grid
+                    self.dialogButon.grid()
+                else:
+                    print("Error: segmented button value not found")
+                    return
     
     def submit(self, event=None):
         user_input = self.input.userInput.get("1.0", ctk.END)
@@ -57,3 +87,4 @@ class MainWindow(ctk.CTk):
         filename = filedialog.askopenfilename()
         print(filename)
         self.fileDialog.translate(filename)
+        
