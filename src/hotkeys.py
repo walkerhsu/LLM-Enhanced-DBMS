@@ -7,9 +7,7 @@ class HotKeys:
         
         self.master.bind('<Escape>', self.exit_fullscreen)
         self.master.bind('<Control-q>', self.close_window)
-        self.master.bind('<Control-c>', self.close_window)
         self.master.bind('<Command-q>', self.close_window)
-        self.master.bind('<Command-c>', self.close_window)
 
     def exit_fullscreen(self, event=None):
         self.is_fullScreen = False

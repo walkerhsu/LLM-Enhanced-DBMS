@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from customtkinter import filedialog
 from openai import OpenAI  
 
 class FileDialog(ctk.CTkFrame):
@@ -9,15 +8,9 @@ class FileDialog(ctk.CTkFrame):
         self.master = master
         self._filename = None
         self._transcription = None
-        self.dialogButon = ctk.CTkButton(self.master, text="🔊 Select Audio 🔊", command=self.selectfile)
-        self.dialogButon.grid(row=0, column=2, padx=20, pady=20)
 
-    def selectfile(self):
-        self._filename = filedialog.askopenfilename()
-        print(self._filename)
-        self.translate()
-
-    def translate(self):
+    def translate(self, filename:str):
+        self._filename = filename
         if not self._filename == "/Users/walker/台大課程大三下/資料庫/LLM-Enhanced-DBMS/audio/test.mp3":
             return
         audio_file = open(self._filename, "rb")
