@@ -1,11 +1,10 @@
 import customtkinter as ctk
-from customtkinter import filedialog
 
 from openai import OpenAI
 
 from hotkeys import HotKeys
 from SQL_connection.connector import SQLConnector
-from UI.gui.file_dialog import FileDialog
+from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
 from UI.gui.Logo import Logo
@@ -44,34 +43,30 @@ class MainWindow(ctk.CTk):
         self.chatBox = ChatBox(self)
         self.input = UserInput(self, self.openAI_client)
 
-        self.dialogButon = ctk.CTkButton(self.master, text="🔊 Select Audio 🔊", command=self.selectfile)
-        self.dialogButon.grid(row=0, column=2, padx=20, pady=20)
-    
         self.submitButton = ctk.CTkButton(self, text="Send", command=self.submit, font=(self.font, 16), height=20, width=100)
         self.submitButton.grid(row=2, column=2, padx=(15, 20), pady=2, sticky='w')
         self.input.userInput.bind("<Return>", self.submit)  # Send message on Enter key press
 
+        self.segmented_button_callback("Chat Playground")
+
     def segmented_button_callback(self, value):
-        print("segmented button clicked:", value)
-        for segment_value in self.segmented_values:
-            if value == segment_value:
-                if value == "Chat Playground":
-                    # remove uploading grid
-                    self.dialogButon.grid_remove()
-                    # set chatting grid
-                    self.chatBox.grid()
-                    self.input.set_mul_grids()
-                    self.submitButton.grid()
-                elif value == "Upload Data":
-                    # remove chatting grid
-                    self.chatBox.grid_remove()
-                    self.input.remove_mul_grids()
-                    self.submitButton.grid_remove()
-                    # set uploading grid
-                    self.dialogButon.grid()
-                else:
-                    print("Error: segmented button value not found")
-                    return
+        if value == "Chat Playground":
+            # remove uploading grid
+            self.fileDialog.remove_mul_grids()
+            # set chatting grid
+            self.chatBox.grid()
+            self.input.set_mul_grids()
+            self.submitButton.grid()
+        elif value == "Upload Data":
+            # remove chatting grid
+            self.chatBox.grid_remove()
+            self.input.remove_mul_grids()
+            self.submitButton.grid_remove()
+            # set uploading grid
+            self.fileDialog.set_mul_grids()
+        else:
+            print("Error: segmented button value not found")
+            return
     
     def submit(self, event=None):
         user_input = self.input.userInput.get("1.0", ctk.END)
@@ -82,9 +77,4 @@ class MainWindow(ctk.CTk):
         self.chatBox.add_message(user_input, "user")
         self.input.userInput.delete("1.0", ctk.END)
         return "break"
-
-    def selectfile(self):
-        filename = filedialog.askopenfilename()
-        print(filename)
-        self.fileDialog.translate(filename)
         

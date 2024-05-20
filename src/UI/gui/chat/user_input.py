@@ -21,8 +21,8 @@ class UserInput(ctk.CTkFrame):
         return "break"
     
     def set_mul_grids(self):
-        self.inputLabel.grid(row=2, column=0, padx=(10, 0), pady=2, sticky='e')
-        self.userInput.grid(row=2, column=1, padx=0, pady=10, sticky="ew")
+        self.inputLabel.grid()
+        self.userInput.grid()
 
     def remove_mul_grids(self):
         self.inputLabel.grid_remove()
