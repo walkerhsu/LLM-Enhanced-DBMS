@@ -1,3 +1,5 @@
 __pycache__/
 sql_config.json
 .env
+font.py
+pdf/

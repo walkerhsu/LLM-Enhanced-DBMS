@@ -1,6 +1,7 @@
 from tkinter import filedialog
 import customtkinter as ctk
 from openai import OpenAI  
+import pymupdf
 
 class FileDialog(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk, openAI_client:OpenAI) -> None:
@@ -36,6 +37,7 @@ class FileDialog(ctk.CTkFrame):
 
     def translate(self, filename:str):
         self._filename = filename
+        self._transcription = ""
         # if not self._filename == "/Users/walker/台大課程大三下/資料庫/LLM-Enhanced-DBMS/audio/test.mp3":
         #     return
         if self._filename.endswith(".mp3") or self._filename.endswith(".wav"):
@@ -47,23 +49,29 @@ class FileDialog(ctk.CTkFrame):
                 language="zh"
             )
         elif self._filename.endswith(".pdf"):
-            self._transcription = "hahaha"
+            doc = pymupdf.open(self._filename) # open a document
+            for page in doc: # iterate the document pages
+                text = page.get_text() # get plain text encoded as UTF-8
+                self._transcription += text
             
         print(self._transcription)
 
     def radiobutton_event(self):
+        self.remove_upload_state()
         if self.radio_var.get() == 1:
             self._filetype = ("Audio Files", "*.mp3 *.wav")
         elif self.radio_var.get() == 2:
             self._filetype = ("PDF Files", "*.pdf")
 
     def selectfile(self):
+        self.remove_upload_state()
         filename = filedialog.askopenfilename(
             filetypes=[
                 self.filetype
             ],
         )
-        print(filename)
+        if filename == "":
+            return
         self.translate(filename)
         self.fileLabel = ctk.CTkLabel(self, text=f"Selected File: {self._filename.split('/')[-1]}", font=(self.master.font, 16))
         self.fileLabel.grid(row=3, column=0, columnspan=2, pady=20, sticky='n')
@@ -92,14 +100,30 @@ class FileDialog(ctk.CTkFrame):
 
     def uploadData(self):
         self.dialogButton.configure(state="disabled")
+        self.audioButton.configure(state="disabled")
+        self.pdfButton.configure(state="disabled")
         tmp = input("Upload Data: ")
         self.dialogButton.configure(state="normal")
+        self.audioButton.configure(state="normal")
+        self.pdfButton.configure(state="normal")
+
+    def remove_upload_state(self):
+        if self.uploadStateLabel:
+            self.uploadStateLabel.grid_remove()
+            self.uploadStateLabel = None
+        if self.fileLabel:
+            self.fileLabel.grid_remove()
+            self.fileLabel = None
+        if self.uploadButton:
+            self.uploadButton.grid_remove()
+            self.uploadButton = None
 
     def set_mul_grids(self):
         self.radioLabel.grid()
         self.audioButton.grid()
         self.pdfButton.grid()
-        self.dialogButton.grid()
+        if self.dialogButton:
+            self.dialogButton.grid()
         if self.fileLabel:
             self.fileLabel.grid()
         if self.uploadButton:
@@ -111,7 +135,8 @@ class FileDialog(ctk.CTkFrame):
         self.radioLabel.grid_remove()
         self.audioButton.grid_remove()
         self.pdfButton.grid_remove()
-        self.dialogButton.grid_remove()
+        if self.dialogButton:
+            self.dialogButton.grid_remove()
         if self.fileLabel:
             self.fileLabel.grid_remove()
         if self.uploadButton:
