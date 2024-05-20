@@ -19,6 +19,14 @@ class UserInput(ctk.CTkFrame):
         print("change line")
         self.userInput.insert(ctk.END, "\n")
         return "break"
+    
+    def set_mul_grids(self):
+        self.inputLabel.grid()
+        self.userInput.grid()
+
+    def remove_mul_grids(self):
+        self.inputLabel.grid_remove()
+        self.userInput.grid_remove()
         
 
         
