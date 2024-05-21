@@ -95,8 +95,7 @@ class FileDialog(ctk.CTkFrame):
         self.uploadData()
 
         print("Upload Complete")
-        self.uploadStateLabel = ctk.CTkLabel(self, text="Upload Complete", font=(self.master.font, 16))
-        self.uploadStateLabel.grid(row=3, column=0, columnspan=4, pady=20, sticky='n')
+        self.uploadStateLabel.configure(text="Upload Complete")
 
     def uploadData(self):
         self.dialogButton.configure(state="disabled")

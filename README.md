@@ -27,4 +27,8 @@ The Database Management System Chatbot is a user-friendly interface built using 
     python main.py
     ```
 
+4. **Add .env and sql_config.json**:
+    Please add .env file under folder src/ with one variable named "OPENAI_API_KEY"
+    Also, please add your sql configuration file under src/SQL_connector with a template in the folder
+
 This will open the a window with chatbot interface, where you can interact with the database using natural language commands.

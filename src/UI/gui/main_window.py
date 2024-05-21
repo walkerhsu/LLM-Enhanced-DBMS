@@ -9,7 +9,6 @@ from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
 from UI.gui.Logo import Logo
 
-
 class MainWindow(ctk.CTk):
     def __init__(self, openAI_client: OpenAI) -> None:
         super().__init__()
@@ -30,10 +29,11 @@ class MainWindow(ctk.CTk):
 
         self.hotkeys = HotKeys(self)
         self.Logo = Logo(self)
+
         self.connector = SQLConnector(config='SQL_Connection/sql_config.json')
 
-        self.segmented_values = ["Chat Playground", "Upload Data"]
-        self.segemented_button_var = ctk.StringVar(value="Chat Playground")
+        self.segmented_values = ["Upload Data", "Chat Playground"]
+        self.segemented_button_var = ctk.StringVar(value="Upload Data")
         self.segemented_button = ctk.CTkSegmentedButton(self, values=self.segmented_values, font=(self.font, 16),
                                                             command=self.segmented_button_callback,
                                                             variable=self.segemented_button_var)
@@ -47,7 +47,7 @@ class MainWindow(ctk.CTk):
         self.submitButton.grid(row=2, column=2, padx=(15, 20), pady=2, sticky='w')
         self.input.userInput.bind("<Return>", self.submit)  # Send message on Enter key press
 
-        self.segmented_button_callback("Chat Playground")
+        self.segmented_button_callback("Upload Data")
 
     def segmented_button_callback(self, value):
         if value == "Chat Playground":
@@ -67,7 +67,7 @@ class MainWindow(ctk.CTk):
         else:
             print("Error: segmented button value not found")
             return
-    
+
     def submit(self, event=None):
         user_input = self.input.userInput.get("1.0", ctk.END)
         user_input = user_input[:-1].strip()
