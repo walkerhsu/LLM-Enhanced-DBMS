@@ -71,7 +71,7 @@ CREATE TABLE `PM` (
     `product` VARCHAR(100) NOT NULL,
     `product_progress` ENUM("not started", "in progress", "completed") DEFAULT "not started" NOT NULL,
     CONSTRAINT `PM_FK` FOREIGN KEY (`employee_ID`) REFERENCES `employee` (`employee_ID`)
-)
+);
 
 CREATE TABLE `intern` (
 	`employee_ID` VARCHAR(15) PRIMARY KEY NOT NULL,
@@ -159,7 +159,8 @@ INSERT INTO `student`
 VALUES 
 ('b10901036', 'NTU', 'Walker', 'EE', 3, 20),
 ('b10901039', 'NTU', 'David', 'EE', 3, 21),
-('b11901174', 'NTU', 'Oscar', 'EE', 2, 20);
+('b10901091', 'NTU', 'Gary', 'EE', 3, 21),
+('b11901174', 'NTU', 'Oscar', 'EE', 2, 21);
 
 Insert INTO `teacher`
 VALUES

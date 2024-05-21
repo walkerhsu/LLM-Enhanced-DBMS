@@ -16,7 +16,6 @@ class UserInput(ctk.CTkFrame):
         self.userInput.bind("<Shift-Return>", self.change_line)
 
     def change_line(self, event):
-        print("change line")
         self.userInput.insert(ctk.END, "\n")
         return "break"
     

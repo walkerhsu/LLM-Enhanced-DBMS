@@ -3,16 +3,18 @@ import customtkinter as ctk
 from openai import OpenAI  
 import pymupdf
 
+from SQLchain import SQL_Chain
 class FileDialog(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk, openAI_client:OpenAI) -> None:
+    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, SQL_Chain:SQL_Chain) -> None:
         super().__init__(master)
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
-        # self.grid_rowconfigure(0, weight=1)
-        # self.grid_rowconfigure(3, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+
         self.openAI_client = openAI_client
         self.master = master
+        self.SQL_Chain = SQL_Chain
+
         self._filetype = ("Audio Files", "*.mp3 *.wav")
         self._filename = ""
         self._transcription = None
@@ -53,8 +55,6 @@ class FileDialog(ctk.CTkFrame):
             for page in doc: # iterate the document pages
                 text = page.get_text() # get plain text encoded as UTF-8
                 self._transcription += text
-            
-        print(self._transcription)
 
     def radiobutton_event(self):
         self.remove_upload_state()
@@ -95,14 +95,15 @@ class FileDialog(ctk.CTkFrame):
         self.uploadData()
 
         print("Upload Complete")
-        self.uploadStateLabel = ctk.CTkLabel(self, text="Upload Complete", font=(self.master.font, 16))
-        self.uploadStateLabel.grid(row=3, column=0, columnspan=4, pady=20, sticky='n')
+        self.uploadStateLabel.configure(text="Upload Complete")
 
     def uploadData(self):
         self.dialogButton.configure(state="disabled")
         self.audioButton.configure(state="disabled")
         self.pdfButton.configure(state="disabled")
-        tmp = input("Upload Data: ")
+        
+        self.SQL_Chain.upload(self._transcription)
+
         self.dialogButton.configure(state="normal")
         self.audioButton.configure(state="normal")
         self.pdfButton.configure(state="normal")
