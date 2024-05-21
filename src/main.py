@@ -12,9 +12,7 @@ if __name__ == "__main__":
 
     load_dotenv()
     api_key = os.environ.get("OPENAI_API_KEY")
-    openAI_client = OpenAI(
-        api_key=api_key
-    )
+    openAI_client = OpenAI()
 
     if not os.path.exists("SQL_Connection/sql_config.json"):
         database    =   input("Enter database name (eg: interview)  : ")

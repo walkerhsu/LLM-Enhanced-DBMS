@@ -3,9 +3,9 @@ import customtkinter as ctk
 from openai import OpenAI  
 import pymupdf
 
-from LLM import LLM_Agent
+from SQLchain import SQL_Chain
 class FileDialog(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, LLM_Agent:LLM_Agent) -> None:
+    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, SQL_Chain:SQL_Chain) -> None:
         super().__init__(master)
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
         self.grid_columnconfigure(0, weight=1)
@@ -13,7 +13,7 @@ class FileDialog(ctk.CTkFrame):
 
         self.openAI_client = openAI_client
         self.master = master
-        self.LLM_Agent = LLM_Agent
+        self.SQL_Chain = SQL_Chain
 
         self._filetype = ("Audio Files", "*.mp3 *.wav")
         self._filename = ""
@@ -102,7 +102,7 @@ class FileDialog(ctk.CTkFrame):
         self.audioButton.configure(state="disabled")
         self.pdfButton.configure(state="disabled")
         
-        self.LLM_Agent.upload(self._transcription)
+        self.SQL_Chain.upload(self._transcription)
 
         self.dialogButton.configure(state="normal")
         self.audioButton.configure(state="normal")

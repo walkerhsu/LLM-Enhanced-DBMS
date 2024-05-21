@@ -3,7 +3,7 @@ import customtkinter as ctk
 from openai import OpenAI
 
 from hotkeys import HotKeys
-from LLM import LLM_Agent
+from SQLchain import SQL_Chain
 from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
@@ -30,7 +30,7 @@ class MainWindow(ctk.CTk):
         self.hotkeys = HotKeys(self)
         self.Logo = Logo(self)
 
-        self.LLM_Agent = LLM_Agent(SQL_config)
+        self.SQL_Chain = SQL_Chain(SQL_config)
 
         self.segmented_values = ["Upload Data", "Chat Playground"]
         self.segemented_button_var = ctk.StringVar(value="Upload Data")
@@ -39,7 +39,7 @@ class MainWindow(ctk.CTk):
                                                             variable=self.segemented_button_var)
         self.segemented_button.grid(row=0, column=1, padx=20, pady=20)
     
-        self.fileDialog = FileDialog(self, self.openAI_client, self.LLM_Agent)
+        self.fileDialog = FileDialog(self, self.openAI_client, self.SQL_Chain)
         self.chatBox = ChatBox(self)
         self.input = UserInput(self, self.openAI_client)
 
@@ -75,6 +75,7 @@ class MainWindow(ctk.CTk):
             return "break"
         self.chatBox.add_message(user_input, "user")
         self.input.userInput.delete("1.0", ctk.END)
-        self.LLM_Agent.query(user_input)
+        answer = self.SQL_Chain.run_chain(user_input)
+        self.chatBox.add_message(answer, "bot")
         return "break"
         
