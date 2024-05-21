@@ -2,39 +2,33 @@ import csv
 import json
 import mysql.connector
 
-# make sure that you have your own config file named "sql_config.json" in the same directory
-# the template of sql_config.json can be found in the same directory named "sql_config_template.json"
-
-
 class SQLConnector:
-    def __init__(self, config='sql_config.json') -> None:
+    def __init__(self, config) -> None:
         self.config = config
         self.get_sql_config()
         self.create_database()
-        # pass
 
     def get_sql_config(self):
-        with open(self.config) as f:
-            config = json.load(f)
-
-        self.host = config['host']
-        self.user = config['user']
-        self.passwd = config['passwd']
-        self.database = config['database']
+        self.host = self.config['host']
+        self.user = self.config['user']
+        self.passwd = self.config['passwd']
+        self.database = self.config['database']
 
     def create_database(self):
         mydb = mysql.connector.connect(user=self.user, password=self.passwd, host=self.host)
         cursor = mydb.cursor()
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.database}")
-        cursor.execute(f"SHOW DATABASES")
-        databases = cursor.fetchall()
-        print(databases)
+        # cursor.execute(f"SHOW DATABASES")
+        # databases = cursor.fetchall()
+        # print(databases)
         cursor.close()
         mydb.close()
 
+
 def main():
-    connector = SQLConnector()
-    
+    with open("./sql_config.json", "r") as f:
+        config = json.load(f)
+    connector = SQLConnector(config=config)
 
 if __name__ == "__main__":
     main()

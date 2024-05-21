@@ -21,16 +21,18 @@ if __name__ == "__main__":
         host        =   input("Enter database host (eg: 127.0.0.1)  : ")
         user        =   input("Enter database user (eg: root)       : ")
         passwd      =   input("Enter database password              : ")
-
         config = {
             "host": host,
             "user": user,
             "passwd": passwd,
             "database": database
         }
-
         with open("SQL_Connection/sql_config.json", "w") as f:
             json.dump(config, f)
+
+    else:
+        with open("SQL_Connection/sql_config.json", "r") as f:
+            SQL_config = json.load(f)
             
-    app = MainWindow(openAI_client)
+    app = MainWindow(openAI_client, SQL_config=SQL_config)
     app.mainloop()

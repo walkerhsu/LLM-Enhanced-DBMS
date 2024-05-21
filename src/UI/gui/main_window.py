@@ -3,14 +3,14 @@ import customtkinter as ctk
 from openai import OpenAI
 
 from hotkeys import HotKeys
-from SQL_connection.connector import SQLConnector
+from LLM import LLM_Agent
 from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
 from UI.gui.Logo import Logo
 
 class MainWindow(ctk.CTk):
-    def __init__(self, openAI_client: OpenAI) -> None:
+    def __init__(self, openAI_client: OpenAI, SQL_config:dict) -> None:
         super().__init__()
         # self.resizable(False, False)
         self.openAI_client = openAI_client
@@ -30,7 +30,7 @@ class MainWindow(ctk.CTk):
         self.hotkeys = HotKeys(self)
         self.Logo = Logo(self)
 
-        self.connector = SQLConnector(config='SQL_Connection/sql_config.json')
+        self.LLM_Agent = LLM_Agent(SQL_config)
 
         self.segmented_values = ["Upload Data", "Chat Playground"]
         self.segemented_button_var = ctk.StringVar(value="Upload Data")
@@ -39,7 +39,7 @@ class MainWindow(ctk.CTk):
                                                             variable=self.segemented_button_var)
         self.segemented_button.grid(row=0, column=1, padx=20, pady=20)
     
-        self.fileDialog = FileDialog(self, self.openAI_client)
+        self.fileDialog = FileDialog(self, self.openAI_client, self.LLM_Agent)
         self.chatBox = ChatBox(self)
         self.input = UserInput(self, self.openAI_client)
 
@@ -73,8 +73,8 @@ class MainWindow(ctk.CTk):
         user_input = user_input[:-1].strip()
         if user_input == "":
             return "break"
-        print(user_input)
         self.chatBox.add_message(user_input, "user")
         self.input.userInput.delete("1.0", ctk.END)
+        self.LLM_Agent.query(user_input)
         return "break"
         

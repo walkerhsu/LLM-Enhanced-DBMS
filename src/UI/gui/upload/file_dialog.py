@@ -3,16 +3,18 @@ import customtkinter as ctk
 from openai import OpenAI  
 import pymupdf
 
+from LLM import LLM_Agent
 class FileDialog(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk, openAI_client:OpenAI) -> None:
+    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, LLM_Agent:LLM_Agent) -> None:
         super().__init__(master)
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
-        # self.grid_rowconfigure(0, weight=1)
-        # self.grid_rowconfigure(3, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+
         self.openAI_client = openAI_client
         self.master = master
+        self.LLM_Agent = LLM_Agent
+
         self._filetype = ("Audio Files", "*.mp3 *.wav")
         self._filename = ""
         self._transcription = None
@@ -53,8 +55,6 @@ class FileDialog(ctk.CTkFrame):
             for page in doc: # iterate the document pages
                 text = page.get_text() # get plain text encoded as UTF-8
                 self._transcription += text
-            
-        print(self._transcription)
 
     def radiobutton_event(self):
         self.remove_upload_state()
@@ -101,7 +101,9 @@ class FileDialog(ctk.CTkFrame):
         self.dialogButton.configure(state="disabled")
         self.audioButton.configure(state="disabled")
         self.pdfButton.configure(state="disabled")
-        tmp = input("Upload Data: ")
+        
+        self.LLM_Agent.upload(self._transcription)
+
         self.dialogButton.configure(state="normal")
         self.audioButton.configure(state="normal")
         self.pdfButton.configure(state="normal")
