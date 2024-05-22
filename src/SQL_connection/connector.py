@@ -13,9 +13,10 @@ class SQLConnector:
         self.user = self.config['user']
         self.passwd = self.config['passwd']
         self.database = self.config['database']
+        self.port = self.config['port']
 
     def create_database(self):
-        mydb = mysql.connector.connect(user=self.user, password=self.passwd, host=self.host)
+        mydb = mysql.connector.connect(user=self.user, password=self.passwd, port=self.port, host=self.host)
         cursor = mydb.cursor()
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.database}")
         # cursor.execute(f"SHOW DATABASES")
