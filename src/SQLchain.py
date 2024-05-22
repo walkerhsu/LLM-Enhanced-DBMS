@@ -113,7 +113,12 @@ class SQL_Chain:
         return extract_data
 
     def run_query(self, query):
-        return self.database.run(query)
+        try:
+            response = self.database.run(query)
+            print(response)
+            return response
+        except Exception as e:
+            return e
     
     def run_insert(self):
         if(len(self.SQL_insertion) == 0):
