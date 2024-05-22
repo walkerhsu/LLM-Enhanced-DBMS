@@ -12,6 +12,7 @@ class SQL_Chain:
         self.config = config
         # self.connector = SQLConnector(config=config)
         db_uri = f"mysql+mysqlconnector://{config['user']}:{config['passwd']}@{config['host']}:{config['port']}/{config['database']}"
+        print(db_uri)
         self.database = SQLDatabase.from_uri(db_uri)
         self.set_template()
         # print(database.get_usable_table_names())
