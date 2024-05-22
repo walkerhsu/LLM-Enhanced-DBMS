@@ -21,7 +21,6 @@ if __name__ == "__main__":
         port        =   input("Enter port number   (eg: 3306)       : ")
         user        =   input("Enter database user (eg: root)       : ")
         passwd      =   input("Enter database password              : ")
-
         config = {
             "host": host,
             "passwd": passwd,
