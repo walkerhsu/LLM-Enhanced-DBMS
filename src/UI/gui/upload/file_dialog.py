@@ -89,24 +89,47 @@ class FileDialog(ctk.CTkFrame):
         self.fileLabel = None
         self.uploadButton.grid_remove()
         self.uploadButton = None
-        self.uploadStateLabel = ctk.CTkLabel(self, text="Uploading...", font=(self.master.font, 16))
+        self.uploadStateLabel = ctk.CTkLabel(self, text="Extracting...", font=(self.master.font, 16))
         self.uploadStateLabel.grid(row=3, column=0, columnspan=2, pady=20, sticky='n')
 
         self.uploadData()
-
-        print("Upload Complete")
-        self.uploadStateLabel.configure(text="Upload Complete")
 
     def uploadData(self):
         self.dialogButton.configure(state="disabled")
         self.audioButton.configure(state="disabled")
         self.pdfButton.configure(state="disabled")
         
-        self.SQL_Chain.upload(self._transcription)
+        extract_data = self.SQL_Chain.run_upload_chain(self._transcription)
+        self.uploadStateLabel.configure(text=extract_data)
+        self.confirmButton = ctk.CTkButton(self, text="Upload", command=self.confirm_upload, font=(self.master.font, 16))
+        self.confirmButton.grid(row=4, column=0, padx=20, pady=20, sticky='n')
+
+        self.cancelButton = ctk.CTkButton(self, text="Cancel", command=self.cancel_upload, font=(self.master.font, 16))
+        self.cancelButton.grid(row=4, column=1, padx=20, pady=20, sticky='n')
 
         self.dialogButton.configure(state="normal")
         self.audioButton.configure(state="normal")
         self.pdfButton.configure(state="normal")
+
+    def confirm_upload(self):
+        self.uploadStateLabel.configure(text="Uploading...")
+        self.confirmButton.grid_remove()
+        self.confirmButton = None
+        self.cancelButton.grid_remove()
+        self.cancelButton = None
+        self.SQL_Chain.run_insert()
+
+        print("Upload Complete")
+        self.uploadStateLabel.configure(text="Upload Complete")
+
+
+    def cancel_upload(self):
+        self.uploadStateLabel.grid_remove()
+        self.confirmButton.grid_remove()
+        self.confirmButton = None
+        self.cancelButton.grid_remove()
+        self.cancelButton = None
+        print("Cancel Upload")
 
     def remove_upload_state(self):
         if self.uploadStateLabel:
@@ -144,6 +167,10 @@ class FileDialog(ctk.CTkFrame):
             self.uploadButton.grid_remove()
         if self.uploadStateLabel:
             self.uploadStateLabel.grid_remove()
+        if self.confirmButton:
+            self.confirmButton.grid_remove()
+        if self.cancelButton:
+            self.cancelButton.grid_remove()
 
     @property
     def filename(self):

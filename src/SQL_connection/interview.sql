@@ -1,22 +1,6 @@
 /* create and use database */
-CREATE DATABASE `Working_Interview_Map_DB`; 
-USE `Working_Interview_Map_DB`;
-
-
-/* info */
-CREATE TABLE `self` (
-    `student_ID` varchar(10) NOT NULL,
-	`name` varchar(10) NOT NULL,
-    `department` varchar(10) NOT NULL,
-    `year` int DEFAULT 1,
-    PRIMARY KEY (`student_ID`)
-);
-
-INSERT INTO self
-VALUES ('b10901036', '許景淯', '電機系', 3);
-
-SELECT DATABASE();
-SELECT * FROM self;
+CREATE DATABASE IF NOT EXISTS`interview`; 
+USE `interview`;
 
 
 /* create table */
@@ -170,7 +154,7 @@ INSERT INTO `recommender`
 VALUES
 ('t987654321', FALSE, TRUE),
 ('t224466880', FALSE, TRUE),
-('e222222222', TRUE, FALSE);;
+('e222222222', TRUE, FALSE);
 
 Insert INTO `teacher`
 VALUE
@@ -332,4 +316,4 @@ SELECT * FROM `interns_view`;
 
 
 /* drop database */
-DROP DATABASE IF EXISTS `Working_Interview_Map_DB`;
+-- DROP DATABASE IF EXISTS `interview`;

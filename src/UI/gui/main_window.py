@@ -75,7 +75,7 @@ class MainWindow(ctk.CTk):
             return "break"
         self.chatBox.add_message(user_input, "user")
         self.input.userInput.delete("1.0", ctk.END)
-        answer = self.SQL_Chain.run_chain(user_input)
+        answer = self.SQL_Chain.run_query_chain(user_input)
         self.chatBox.add_message(answer, "bot")
         return "break"
         
