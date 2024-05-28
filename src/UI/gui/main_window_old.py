@@ -8,12 +8,13 @@ from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
 from UI.gui.Logo import Logo
+import json
 import mysql
 from tkinter import messagebox
 
 class MainWindow(ctk.CTk):
-    def __init__(self, openAI_client: OpenAI) -> None:
-    # def __init__(self, openAI_client: OpenAI, SQL_config:dict) -> None:
+    # def __init__(self, openAI_client: OpenAI) -> None:
+    def __init__(self, openAI_client: OpenAI, SQL_config:dict) -> None:
         super().__init__()
         # self.resizable(False, False)
         self.openAI_client = openAI_client
@@ -23,62 +24,47 @@ class MainWindow(ctk.CTk):
         self.title("LLM-Enhanced-DBMS")
         self.font = 'Avenir Next'
 
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
-        self.grid_rowconfigure(2, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=1)
-
-        self.hotkeys = HotKeys(self)
-        self.Logo = Logo(self)
-        
-        self.login_frame = ctk.CTkFrame(self, width=250, height=280)
-        self.login_frame.grid_propagate(False)
-        self.login_frame.grid(row=1, column=1, padx=(300, 350), pady=0)
-        self.login_frame.grid_columnconfigure(0, weight=1)
-        self.login_frame.grid_columnconfigure(1, weight=1)
-
-        self.connection_label = ctk.CTkLabel(self.login_frame, text="Connect to MySQL", font=(self.font, 17, "bold"))
-        self.connection_label.grid(row=0, columnspan=2, pady=5)
-
-        self.database_label = ctk.CTkLabel(self.login_frame, text="Database", font=(self.font, 15))
-        self.database_label.grid(row=1, column=0, padx=5, pady=5)
-        self.database_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 15))
-        self.database_entry.grid(row=1, column=1, padx=5, pady=5)
-        
-        self.host_label = ctk.CTkLabel(self.login_frame, text="Host", font=(self.font, 15))
-        self.host_label.grid(row=2, column=0, padx=5, pady=5)
-        self.host_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 15))
-        self.host_entry.grid(row=2, column=1, padx=5, pady=5)
-
-        self.port_label = ctk.CTkLabel(self.login_frame, text="Port", font=(self.font, 15))
-        self.port_label.grid(row=3, column=0, padx=5, pady=5)
-        self.port_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 15))
-        self.port_entry.grid(row=3, column=1, padx=5, pady=5)
-
-        self.user_label = ctk.CTkLabel(self.login_frame, text="User", font=(self.font, 15))
-        self.user_label.grid(row=4, column=0, padx=5, pady=5)
-        self.user_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 15))
-        self.user_entry.grid(row=4, column=1, padx=5, pady=5)
-
-        self.password_label = ctk.CTkLabel(self.login_frame, text="Password", font=(self.font, 15))
-        self.password_label.grid(row=5, column=0, padx=5, pady=5)
-        self.password_entry = ctk.CTkEntry(self.login_frame, show="*", font=(self.font, 15))
-        self.password_entry.grid(row=5, column=1, padx=5, pady=5)
-
-        self.login_button = ctk.CTkButton(self.login_frame, text="Connect", command=self.handle_login, font=(self.font, 15))
-        self.login_button.grid(row=6, column=0, columnspan=2, padx=5, pady=10)
-
-    
-
-    def show_real_ui(self):
         self.grid_rowconfigure(0, weight=3, minsize=100)
         self.grid_rowconfigure(1, weight=5, minsize=300)
         self.grid_rowconfigure(2, weight=3, minsize=40)
         self.grid_columnconfigure(0, weight=3, minsize=100)
         self.grid_columnconfigure(1, weight=8, minsize=570)
         self.grid_columnconfigure(2, weight=1, minsize=120)
+
+        self.hotkeys = HotKeys(self)
+        self.Logo = Logo(self)
+        
+        self.login_frame = ctk.CTkFrame(self, width=100, height=100)
+        self.login_frame.grid(row=0, column=2, padx=10, pady=10, sticky='ne')
+        self.login_frame.pack_propagate(False)
+
+        self.connection_label = ctk.CTkLabel(self.login_frame, text="Connect to MySQL", font=(self.font, 12))
+        self.connection_label.grid(row=0, columnspan=2, pady=5)
+
+        self.host_label = ctk.CTkLabel(self.login_frame, text="Host", font=(self.font, 12))
+        self.host_label.grid(row=1, column=0, padx=5, pady=5)
+        self.host_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 12))
+        self.host_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        self.user_label = ctk.CTkLabel(self.login_frame, text="User", font=(self.font, 12))
+        self.user_label.grid(row=2, column=0, padx=5, pady=5)
+        self.user_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 12))
+        self.user_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        self.password_label = ctk.CTkLabel(self.login_frame, text="Password", font=(self.font, 12))
+        self.password_label.grid(row=3, column=0, padx=5, pady=5)
+        self.password_entry = ctk.CTkEntry(self.login_frame, show="*", font=(self.font, 12))
+        self.password_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        self.database_label = ctk.CTkLabel(self.login_frame, text="Database", font=(self.font, 12))
+        self.database_label.grid(row=4, column=0, padx=5, pady=5)
+        self.database_entry = ctk.CTkEntry(self.login_frame, font=(self.font, 12))
+        self.database_entry.grid(row=4, column=1, padx=5, pady=5)
+
+        # self.login_button = ctk.CTkButton(self.login_frame, text="Connect", command=self.handle_login, font=(self.font, 12))
+        # self.login_button.grid(row=5, column=0, columnspan=2, padx=5, pady=10)
+
+        self.SQL_Chain = SQL_Chain(SQL_config)
 
         self.segmented_values = ["Upload Data", "Chat Playground"]
         self.segemented_button_var = ctk.StringVar(value="Upload Data")
@@ -133,18 +119,19 @@ class MainWindow(ctk.CTk):
         user = self.user_entry.get()
         password = self.password_entry.get()
         database = self.database_entry.get()
-        port = self.port_entry.get()
 
         SQL_config = {
             "host": host,
             "user": user,
             "passwd": password,
-            "database": database,
-            "port": port
+            "database": database
         }
 
+        # with open('./SQL_connection/sql_config.json', 'w') as config_file:
+        #     json.dump(config, config_file, indent=4)
 
         try:
+            # self.connector = SQLConnector(config='./SQL_connection/sql_config.json')
             self.SQL_Chain = SQL_Chain(SQL_config)
             messagebox.showinfo("Connection Successful", "Successfully connected to the database.")
             self.connection_label.grid_remove()
@@ -157,8 +144,8 @@ class MainWindow(ctk.CTk):
             self.database_label.grid_remove()
             self.database_entry.grid_remove()
             self.login_button.grid_remove()
-            self.login_frame.grid_remove()
-            self.show_real_ui()
+            connected_label = ctk.CTkLabel(self.login_frame, text="MySQL Connected", font=(self.font, 12))
+            connected_label.grid(row=4, columnspan=2, pady=5)
 
         except mysql.connector.Error as e:
             messagebox.showinfo("Connection Error", f"Error: {e}")
