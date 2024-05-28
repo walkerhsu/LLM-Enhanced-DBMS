@@ -35,6 +35,8 @@ class FileDialog(ctk.CTkFrame):
         self.fileLabel = None
         self.uploadButton = None
         self.uploadStateLabel = None
+        self.confirmButton = None
+        self.cancelButton = None
 
 
     def translate(self, filename:str):
@@ -154,6 +156,10 @@ class FileDialog(ctk.CTkFrame):
             self.uploadButton.grid()
         if self.uploadStateLabel:
             self.uploadStateLabel.grid()
+        if self.confirmButton:
+            self.confirmButton.grid()
+        if self.cancelButton:
+            self.cancelButton.grid()
 
     def remove_mul_grids(self):
         self.radioLabel.grid_remove()
