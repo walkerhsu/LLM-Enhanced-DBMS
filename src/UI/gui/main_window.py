@@ -92,11 +92,11 @@ class MainWindow(ctk.CTk):
             self.connection_label.configure(text="Connect to MySQL")
             self.database_label.configure(text="Database")
             self.host_label.configure(text="Host")
-            self.port_label.configure(text="Port")
+            self.port_label.grid()
+            self.port_entry.grid()
             self.user_label.grid()
             self.user_entry.grid()
-            self.password_label.grid()
-            self.password_entry.grid()
+            self.password_label.configure(text="Password")
             self.login_button.configure(command=self.handle_SQL_login)
         else:
             # self.Logo.grid_remove()
@@ -107,16 +107,13 @@ class MainWindow(ctk.CTk):
             self.connection_label.configure(text="Connect to MongoDB")
             self.database_label.configure(text="Database")
             self.host_label.configure(text="Collection")
-            self.port_label.configure(text="Connection String")
+            self.port_label.grid_remove()
+            self.port_entry.grid_remove()
             self.user_label.grid_remove()
             self.user_entry.grid_remove()
-            self.password_label.grid_remove()
-            self.password_entry.grid_remove()
+            self.password_label.configure(text="Connection String")
             self.login_button.configure(command=self.handle_mongoDB_login)
             
-
-    def handle_mongoDB_login(self):
-        pass
 
     def show_real_ui(self):
         self.grid_rowconfigure(0, weight=3, minsize=100)
@@ -133,7 +130,7 @@ class MainWindow(ctk.CTk):
                                                             variable=self.segemented_button_var)
         self.segemented_button.grid(row=0, column=1, padx=20, pady=20)
     
-        self.fileDialog = FileDialog(self, self.openAI_client, self.SQL_Chain)
+        self.fileDialog = FileDialog(self, self.openAI_client, self.DB_LLM_Chain)
         self.chatBox = ChatBox(self)
         self.input = UserInput(self, self.openAI_client)
 
@@ -169,7 +166,7 @@ class MainWindow(ctk.CTk):
             return "break"
         self.chatBox.add_message(user_input, "user")
         self.input.userInput.delete("1.0", ctk.END)
-        answer = self.SQL_Chain.run_query_chain(user_input)
+        answer = self.DB_LLM_Chain.run_query_chain(user_input)
         self.chatBox.add_message(answer, "bot")
         return "break"
         
@@ -191,7 +188,7 @@ class MainWindow(ctk.CTk):
 
 
         try:
-            self.SQL_Chain = SQL_Chain(SQL_config)
+            self.DB_LLM_Chain = SQL_Chain(SQL_config)
             messagebox.showinfo("Connection Successful", "Successfully connected to the database.")
             self.connection_label.grid_remove()
             self.host_label.grid_remove()
@@ -209,5 +206,35 @@ class MainWindow(ctk.CTk):
         except mysql.connector.Error as e:
             messagebox.showinfo("Connection Error", f"Error: {e}")
             
+        except Exception as e:
+            messagebox.showinfo("Connection Error", f"Unexpected error: {e}")
+
+    def handle_mongoDB_login(self):
+        database = self.database_entry.get()
+        collection = self.host_entry.get()
+        connection_string = self.password_entry.get()
+
+        mongoDB_config = {
+            "database": database,
+            "collection": collection,
+            "connection_string": connection_string
+        }
+
+        try:
+            self.DB_LLM_Chain = MongoDB_Chain(mongoDB_config)
+            messagebox.showinfo("Connection Successful", "Successfully connected to the MongoDB collection.")
+            self.connection_label.grid_remove()
+            self.host_label.grid_remove()
+            self.host_entry.grid_remove()
+            self.user_label.grid_remove()
+            self.user_entry.grid_remove()
+            self.password_label.grid_remove()
+            self.password_entry.grid_remove()
+            self.database_label.grid_remove()
+            self.database_entry.grid_remove()
+            self.login_button.grid_remove()
+            self.login_frame.grid_remove()
+            self.show_real_ui()
+
         except Exception as e:
             messagebox.showinfo("Connection Error", f"Unexpected error: {e}")
