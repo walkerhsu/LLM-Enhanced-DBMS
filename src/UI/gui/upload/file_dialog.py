@@ -3,9 +3,9 @@ import customtkinter as ctk
 from openai import OpenAI  
 import pymupdf
 
-from SQLchain import SQL_Chain
+# from SQLchain import DB_LLM_Chain
 class FileDialog(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, SQL_Chain:SQL_Chain) -> None:
+    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, DB_LLM_Chain) -> None:
         super().__init__(master)
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
         self.grid_columnconfigure(0, weight=1)
@@ -13,7 +13,7 @@ class FileDialog(ctk.CTkFrame):
 
         self.openAI_client = openAI_client
         self.master = master
-        self.SQL_Chain = SQL_Chain
+        self.DB_LLM_Chain = DB_LLM_Chain
 
         self._filetype = ("Audio Files", "*.mp3 *.wav")
         self._filename = ""
@@ -101,7 +101,7 @@ class FileDialog(ctk.CTkFrame):
         self.audioButton.configure(state="disabled")
         self.pdfButton.configure(state="disabled")
         
-        extract_data = self.SQL_Chain.run_upload_chain(self._transcription)
+        extract_data = self.DB_LLM_Chain.run_upload_chain(self._transcription)
         self.uploadStateLabel.configure(text=extract_data)
         self.confirmButton = ctk.CTkButton(self, text="Upload", command=self.confirm_upload, font=(self.master.font, 16))
         self.confirmButton.grid(row=4, column=0, padx=20, pady=20, sticky='n')
@@ -119,7 +119,7 @@ class FileDialog(ctk.CTkFrame):
         self.confirmButton = None
         self.cancelButton.grid_remove()
         self.cancelButton = None
-        self.SQL_Chain.run_insert()
+        self.DB_LLM_Chain.run_insert()
 
         print("Upload Complete")
         self.uploadStateLabel.configure(text="Upload Complete")

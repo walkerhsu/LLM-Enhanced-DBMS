@@ -1,4 +1,5 @@
 {
   "database": "testDB",
-  "collection": "chain_testing"
+  "collection": "chain_testing",
+  "connection_string": "mongodb+srv://david551158:d5oGbqWoJKTJjNNs@dbmscluster.a3zqjdd.mongodb.net/"
 }

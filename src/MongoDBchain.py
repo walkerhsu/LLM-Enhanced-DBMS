@@ -1,12 +1,7 @@
 import json
-import getpass, os, pymongo, pprint
-from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_mongodb import MongoDBAtlasVectorSearch
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.prompts import PromptTemplate
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_openai import ChatOpenAI
 from pymongo import MongoClient
 from langchain_core.prompts import ChatPromptTemplate
 import re
@@ -45,18 +40,14 @@ User Data: {data}
 Output:""" ,
 ]
 
-os.environ["OPENAI_API_KEY"] = "sk-proj-IblyTA7fYkc1rkvyonlpT3BlbkFJWO8DB7VRwY3fY8yboYwH"
-
-ATLAS_CONNECTION_STRING = "mongodb+srv://david551158:d5oGbqWoJKTJjNNs@dbmscluster.a3zqjdd.mongodb.net/"
-
 class MongoDB_Chain:
     def __init__(self, config:dict) -> None:
+        # initial login
         self.config = config
         self.db_name = config["database"]
         self.collection_name = config["collection"]
-        self.client = MongoClient(ATLAS_CONNECTION_STRING)
+        self.client = MongoClient(config["connection_string"])
         self.set_template()
-
         self.llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
         # upload chain
