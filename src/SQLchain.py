@@ -51,7 +51,7 @@ class SQL_Chain:
         self.sql_chain = (
             RunnablePassthrough.assign(schema=self.get_schema)
             | self.query_prompt
-            | self.llm.bind(stop=["\nSQLResult:"])
+            | self.llm.bind(stop=["\nSQL Result:"])
             | StrOutputParser()
         )
         self.full_chain = (
@@ -107,11 +107,17 @@ class SQL_Chain:
         extract_data = self.extract_chain.invoke({"data": data})
         extract_data = organize_data(extract_data)
         print(extract_data)
+        # self.SQL_insertion = self.upload_chain.invoke({"data": extract_data}).split(";")
+        # # add ; to the end of the query
+        # self.SQL_insertion = [insertion.strip('').strip('\n') + ";" for insertion in self.SQL_insertion if (insertion != "" and insertion != "\n")]
+        # print(self.SQL_insertion)
+        return extract_data
+    
+    def run_SQL_insertion(self, extract_data):
         self.SQL_insertion = self.upload_chain.invoke({"data": extract_data}).split(";")
         # add ; to the end of the query
         self.SQL_insertion = [insertion.strip('').strip('\n') + ";" for insertion in self.SQL_insertion if (insertion != "" and insertion != "\n")]
         print(self.SQL_insertion)
-        return extract_data
 
     def run_query(self, query):
         try:
