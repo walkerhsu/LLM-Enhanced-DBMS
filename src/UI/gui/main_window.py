@@ -36,7 +36,7 @@ class MainWindow(ctk.CTk):
         # self.MongoDB_Logo = MongoDB_Logo(self)
         # self.MongoDB_Logo.grid_remove()
         
-        self.login_frame = ctk.CTkFrame(self, width=270, height=330)
+        self.login_frame = ctk.CTkFrame(self, width=400, height=350)
         self.login_frame.grid_propagate(False)
         self.login_frame.grid(row=1, column=1, padx=(300, 350), pady=0)
         self.login_frame.grid_columnconfigure(0, weight=1)
@@ -88,7 +88,7 @@ class MainWindow(ctk.CTk):
             # self.MongoDB_Logo.grid_remove()
             self.switch_mongodb_button.grid()
             self.switch_mySQL_button.grid_remove()
-            self.login_frame.configure(width=270, height=330)
+            self.login_frame.configure(width=400, height=350)
             self.connection_label.configure(text="Connect to MySQL")
             self.database_label.configure(text="Database")
             self.host_label.configure(text="Host")
@@ -103,7 +103,7 @@ class MainWindow(ctk.CTk):
             # self.MongoDB_Logo.grid()
             self.switch_mySQL_button.grid()
             self.switch_mongodb_button.grid_remove()
-            self.login_frame.configure(width=680, height=260)
+            self.login_frame.configure(width=400, height=350)
             self.connection_label.configure(text="Connect to MongoDB")
             self.database_label.configure(text="Database")
             self.host_label.configure(text="Collection")
@@ -178,11 +178,11 @@ class MainWindow(ctk.CTk):
         database = self.database_entry.get()
         port = self.port_entry.get()
         
-        # host = "127.0.0.1"
-        # user = "root"
-        # password = "cheesecake"
-        # database = "k"
-        # port = "3306"
+        host = "127.0.0.1"
+        user = "root"
+        password = "cheesecake"
+        database = "k"
+        port = "3306"
 
         SQL_config = {
             "host": host,
