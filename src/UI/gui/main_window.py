@@ -8,7 +8,7 @@ from MongoDBchain import MongoDB_Chain
 from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
-from UI.gui.Logo import Logo
+from UI.gui.Logo import SQL_Logo, MongoDB_Logo
 import mysql
 from tkinter import messagebox
 
@@ -32,13 +32,16 @@ class MainWindow(ctk.CTk):
         self.grid_columnconfigure(2, weight=1)
 
         self.hotkeys = HotKeys(self)
-        self.Logo = Logo(self)
+        self.Logo = SQL_Logo(self)
+        # self.MongoDB_Logo = MongoDB_Logo(self)
+        # self.MongoDB_Logo.grid_remove()
         
-        self.login_frame = ctk.CTkFrame(self, width=250, height=280)
+        self.login_frame = ctk.CTkFrame(self, width=270, height=330)
         self.login_frame.grid_propagate(False)
         self.login_frame.grid(row=1, column=1, padx=(300, 350), pady=0)
         self.login_frame.grid_columnconfigure(0, weight=1)
         self.login_frame.grid_columnconfigure(1, weight=1)
+
 
         self.connection_label = ctk.CTkLabel(self.login_frame, text="Connect to MySQL", font=(self.font, 17, "bold"))
         self.connection_label.grid(row=0, columnspan=2, pady=5)
@@ -68,10 +71,52 @@ class MainWindow(ctk.CTk):
         self.password_entry = ctk.CTkEntry(self.login_frame, show="*", font=(self.font, 15))
         self.password_entry.grid(row=5, column=1, padx=5, pady=5)
 
-        self.login_button = ctk.CTkButton(self.login_frame, text="Connect", command=self.handle_login, font=(self.font, 15))
+        self.login_button = ctk.CTkButton(self.login_frame, text="Connect", command=self.handle_SQL_login, font=(self.font, 15))
         self.login_button.grid(row=6, column=0, columnspan=2, padx=5, pady=10)
 
+        self.switch_mongodb_button = ctk.CTkButton(self.login_frame, text="Change to MongoDB", command=self.switch_login_page, font=(self.font, 15), fg_color="purple")
+        self.switch_mongodb_button.grid(row=7, column=0, columnspan=2, padx=5, pady=10)
+
+        self.switch_mySQL_button = ctk.CTkButton(self.login_frame, text="Change to MySQL", command=self.switch_login_page, font=(self.font, 15), fg_color="purple")
+        self.switch_mySQL_button.grid(row=7, column=0, columnspan=2, padx=5, pady=10)
     
+        self.switch_mySQL_button.grid_remove()
+
+    def switch_login_page(self):
+        if not self.switch_mongodb_button.winfo_ismapped():
+            # self.Logo.grid()
+            # self.MongoDB_Logo.grid_remove()
+            self.switch_mongodb_button.grid()
+            self.switch_mySQL_button.grid_remove()
+            self.login_frame.configure(width=270, height=330)
+            self.connection_label.configure(text="Connect to MySQL")
+            self.database_label.configure(text="Database")
+            self.host_label.configure(text="Host")
+            self.port_label.configure(text="Port")
+            self.user_label.grid()
+            self.user_entry.grid()
+            self.password_label.grid()
+            self.password_entry.grid()
+            self.login_button.configure(command=self.handle_SQL_login)
+        else:
+            # self.Logo.grid_remove()
+            # self.MongoDB_Logo.grid()
+            self.switch_mySQL_button.grid()
+            self.switch_mongodb_button.grid_remove()
+            self.login_frame.configure(width=680, height=260)
+            self.connection_label.configure(text="Connect to MongoDB")
+            self.database_label.configure(text="Database")
+            self.host_label.configure(text="Collection")
+            self.port_label.configure(text="Connection String")
+            self.user_label.grid_remove()
+            self.user_entry.grid_remove()
+            self.password_label.grid_remove()
+            self.password_entry.grid_remove()
+            self.login_button.configure(command=self.handle_mongoDB_login)
+            
+
+    def handle_mongoDB_login(self):
+        pass
 
     def show_real_ui(self):
         self.grid_rowconfigure(0, weight=3, minsize=100)
@@ -129,7 +174,7 @@ class MainWindow(ctk.CTk):
         return "break"
         
 
-    def handle_login(self):
+    def handle_SQL_login(self):
         host = self.host_entry.get()
         user = self.user_entry.get()
         password = self.password_entry.get()
