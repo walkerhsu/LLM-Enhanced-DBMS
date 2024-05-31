@@ -8,3 +8,5 @@ PyMuPDF
 langchain
 langchain-community
 langchain-openai
+pymongo
+langchain_mongodb
