@@ -4,6 +4,7 @@ from openai import OpenAI
 
 from hotkeys import HotKeys
 from SQLchain import SQL_Chain
+from MongoDBchain import MongoDB_Chain
 from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox

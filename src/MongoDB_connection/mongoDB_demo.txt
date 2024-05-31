@@ -1,0 +1,28 @@
+chain = MongoDB_Chain(config=config)
+chain.run_upload_chain("""David is a student in the National Taiwan University. His major is EE.
+                        Walker is also a student in the National Taiwan University. He has two majors, which are EE and FL.""")
+
+chain.run_upload_chain("""In National Young University, a diverse group of students brought unique talents and personalities to the table. 
+                        Maria, a budding artist with a flair for painting, often dazzled her classmates with her colorful and imaginative artwork. 
+                        Next to her sat Jamal, the class math whiz, whose quick thinking and problem-solving skills made him a favorite in group projects. 
+                        Emily, known for her love of reading, could always be found with her nose in a book, ready to share fascinating facts or stories with her friends. 
+                        At the back of the room, Ravi, a natural leader and soccer enthusiast, organized impromptu games during recess and encouraged teamwork among his peers. 
+                        Finally, there's Sophie, whose knack for storytelling and drama made her the star of every school play, captivating audiences with her expressive performances. Together, these five students created a vibrant and dynamic classroom environment where creativity, intellect, and camaraderie thrived.""")
+
+print("\nQ: What is the major of David?")
+chain.run_query_chain("What is the major of David?")
+
+print("\nQ: How many students are there that study in National Taiwan University?")
+chain.run_query_chain("How many students are there that study in National Taiwan University?")
+
+print("\nQ: Choose a number from 1 ~ 5 for me, and add it as a creativity score to each student in National Young University.")
+chain.run_query_chain("Choose a number from 1 ~ 5 for me, and add it as a creativity score to each student in National Young University.")
+
+print("\nQ: Please change a student's creative score to 10.")
+chain.run_query_chain("Please change a student's creative score to 10.")
+
+print("\nQ: Who is the student in National Young University with the highest imaginative_score?")
+chain.run_query_chain("Who is the student in National Young University with the highest imaginative_score?")
+
+print("\nQ: David has a major in EE. Who else has a major in EE?")
+chain.run_query_chain("David has a major in EE. Who else has a major in EE?")
