@@ -77,8 +77,7 @@ class MongoDB_Chain:
 
     def get_attr(self, e):
         desired_template = "{"
-        input_attr = input("Enter the desired attribute: ")
-        input_attr = input_attr.split(",")
+        input_attr = self.desired_attr.split(",")
         for i, sttr in enumerate(input_attr):
             desired_template += f'{sttr}: "value {i}", '
         desired_template = desired_template[:-2] + "}"
@@ -97,33 +96,43 @@ class MongoDB_Chain:
         command = correct_unmatched_brackets(command)
 
         # This could be extremely dangerous for prompt injection attack!!!
-        local_vars = {}
-        command = "result = " + command
-        exec(command, {"db": self.client[self.db_name]}, local_vars)
+        try:
+            local_vars = {}
+            command = "result = " + command
+            exec(command, {"db": self.client[self.db_name]}, local_vars)
+            if "find(" in command:
+                result = list(local_vars["result"])
+                return str(result)
 
-        if "find(" in command:
-            result = list(local_vars["result"])
-            return str(result)
+            return str(local_vars["result"])
         
-        return str(local_vars["result"])
+        except Exception as e:
+            return str(e)
+
+        
     
-    def run_upload_chain(self, data:str):
+    def run_upload_chain(self, data:str, desired_attr:str):
+        self.desired_attr = desired_attr
         extract_data = self.extract_chain.invoke({"data": data})
-        print(extract_data)
-        extract_data = json.loads(extract_data)
+        # extract_data = json.loads(extract_data)
+
+        return extract_data
+    
+    def run_insert(self, edited_data:str):
         collection = self.client[self.db_name][self.collection_name]
+        edited_data = json.loads(edited_data)
 
         # if template_data doesn't exist, insert one
         if collection.count_documents({"special_dataType": "template_data"}) == 0:
             collection.insert_one({"special_dataType": "template_data"})
         
         # update template_data to keep up the full key space
-        for data in extract_data:
+        for data in edited_data:
             for key, _ in data.items():
                 collection.update_one({"special_dataType": "template_data"}, {"$set": {key: f"{key}_value"}})
 
-        collection.insert_many(extract_data)
-        return extract_data
+        collection.insert_many(edited_data)
+
     
     def run_query_chain(self, prompt:str):
         result = self.query_full_chain.invoke({"question": prompt, "collection_name": self.collection_name})

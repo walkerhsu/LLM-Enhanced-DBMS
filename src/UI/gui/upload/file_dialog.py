@@ -8,6 +8,7 @@ import pymupdf
 # from SQLchain import DB_LLM_Chain
 class FileDialog(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk, openAI_client:OpenAI, DB_LLM_Chain: SQL_Chain | MongoDB_Chain) -> None:
+        # print(type(DB_LLM_Chain).__name__)
         super().__init__(master)
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
         self.grid_columnconfigure(0, weight=1)
@@ -40,6 +41,16 @@ class FileDialog(ctk.CTkFrame):
         self.confirmButton = None
         self.cancelButton = None
         self.editableTextBox = None
+
+        self.db_type = type(DB_LLM_Chain).__name__
+
+        if self.db_type == "MongoDB_Chain":
+            self.attr_label = ctk.CTkLabel(self, text="Desired Attribute", font=(self.master.font, 15))
+            self.attr_label.grid(row=5, column=0, padx=5, pady=5)
+            self.attr_label.grid_remove()
+            self.attr_entry = ctk.CTkEntry(self, font=(self.master.font, 15))
+            self.attr_entry.grid(row=5, column=1, padx=5, pady=5)
+            self.attr_entry.grid_remove()
 
     def translate(self, filename:str):
         self._filename = filename
@@ -83,11 +94,19 @@ class FileDialog(ctk.CTkFrame):
         self.uploadButton = ctk.CTkButton(self, text="Upload", command=self.upload, font=(self.master.font, 16))
         self.uploadButton.grid(row=4, column=0, columnspan=2, padx=20, pady=20, sticky='n')
 
+        if self.db_type == "MongoDB_Chain":
+            self.attr_label.grid()
+            self.attr_entry.grid()
+
     def upload(self):
         if self._transcription is None:
             print("Error: No file selected")
             return
         print("Uploading...")
+
+        if self.db_type == "MongoDB_Chain":
+            self.attr_label.grid_remove()
+            self.attr_entry.grid_remove()
 
         self.fileLabel.grid_remove()
         self.fileLabel = None
@@ -95,7 +114,6 @@ class FileDialog(ctk.CTkFrame):
         self.uploadButton = None
         self.uploadStateLabel = ctk.CTkLabel(self, text="Extracting...", font=(self.master.font, 16))
         self.uploadStateLabel.grid(row=3, column=0, columnspan=2, pady=20, sticky='n')
-
         self.uploadData()
 
     def uploadData(self):
@@ -103,8 +121,14 @@ class FileDialog(ctk.CTkFrame):
         self.audioButton.configure(state="disabled")
         self.pdfButton.configure(state="disabled")
         
-        extract_data = self.DB_LLM_Chain.run_upload_chain(self._transcription)
-        # extract_data = self.SQL_Chain.run_upload_chain(self._transcription)
+        if self.db_type == "MongoDB_Chain":
+            desired_attr = self.attr_entry.get()
+            self.attr_entry.delete(0, ctk.END)
+            extract_data = self.DB_LLM_Chain.run_upload_chain(self._transcription, desired_attr)
+        else:
+            extract_data = self.DB_LLM_Chain.run_upload_chain(self._transcription)
+            
+        
         print("Extract Data=", extract_data)
         
         # Editable box
@@ -136,13 +160,19 @@ class FileDialog(ctk.CTkFrame):
         
         edited_data = self.editableTextBox.get("1.0", "end-1c")
         print("edited Data=", edited_data)
-        self.DB_LLM_Chain.run_SQL_insertion(edited_data)
-        
-        # self.SQL_Chain.run_insert()
-        self.DB_LLM_Chain.run_insert()
+
+        self.editableTextBox.grid_remove()
+
+        if self.db_type == "MongoDB_Chain":
+            self.DB_LLM_Chain.run_insert(edited_data)
+        else:
+            self.DB_LLM_Chain.run_SQL_insertion(edited_data)
+            self.DB_LLM_Chain.run_insert()
 
         print("Upload Complete")
         self.uploadStateLabel.configure(text="Upload Complete")
+
+
 
 
     def cancel_upload(self):

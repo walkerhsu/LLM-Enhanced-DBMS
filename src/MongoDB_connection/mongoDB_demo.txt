@@ -9,9 +9,6 @@ chain.run_upload_chain("""In National Young University, a diverse group of stude
                         At the back of the room, Ravi, a natural leader and soccer enthusiast, organized impromptu games during recess and encouraged teamwork among his peers. 
                         Finally, there's Sophie, whose knack for storytelling and drama made her the star of every school play, captivating audiences with her expressive performances. Together, these five students created a vibrant and dynamic classroom environment where creativity, intellect, and camaraderie thrived.""")
 
-print("\nQ: What is the major of David?")
-chain.run_query_chain("What is the major of David?")
-
 print("\nQ: How many students are there that study in National Taiwan University?")
 chain.run_query_chain("How many students are there that study in National Taiwan University?")
 
