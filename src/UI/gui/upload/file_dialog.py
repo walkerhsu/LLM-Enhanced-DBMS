@@ -1,11 +1,13 @@
 from tkinter import filedialog
+from MongoDBchain import MongoDB_Chain
+from SQLchain import SQL_Chain
 import customtkinter as ctk
 from openai import OpenAI  
 import pymupdf
 
 # from SQLchain import DB_LLM_Chain
 class FileDialog(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, DB_LLM_Chain) -> None:
+    def __init__(self, master: ctk.CTk, openAI_client:OpenAI, DB_LLM_Chain: SQL_Chain | MongoDB_Chain) -> None:
         super().__init__(master)
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
         self.grid_columnconfigure(0, weight=1)
@@ -37,7 +39,7 @@ class FileDialog(ctk.CTkFrame):
         self.uploadStateLabel = None
         self.confirmButton = None
         self.cancelButton = None
-
+        self.editableTextBox = None
 
     def translate(self, filename:str):
         self._filename = filename
@@ -102,6 +104,17 @@ class FileDialog(ctk.CTkFrame):
         self.pdfButton.configure(state="disabled")
         
         extract_data = self.DB_LLM_Chain.run_upload_chain(self._transcription)
+        # extract_data = self.SQL_Chain.run_upload_chain(self._transcription)
+        print("Extract Data=", extract_data)
+        
+        # Editable box
+        self.editableTextBox = ctk.CTkTextbox(self, font=(self.master.font, 16), wrap="word")
+        self.editableTextBox.insert("1.0", extract_data)
+        self.editableTextBox.grid(row=3, column=0, columnspan=2, pady=20, padx=20, sticky='nesw')
+        
+        self.uploadStateLabel.grid_remove()
+        
+    
         self.uploadStateLabel.configure(text=extract_data)
         self.confirmButton = ctk.CTkButton(self, text="Upload", command=self.confirm_upload, font=(self.master.font, 16))
         self.confirmButton.grid(row=4, column=0, padx=20, pady=20, sticky='n')
@@ -119,6 +132,13 @@ class FileDialog(ctk.CTkFrame):
         self.confirmButton = None
         self.cancelButton.grid_remove()
         self.cancelButton = None
+        
+        
+        edited_data = self.editableTextBox.get("1.0", "end-1c")
+        print("edited Data=", edited_data)
+        self.DB_LLM_Chain.run_SQL_insertion(edited_data)
+        
+        # self.SQL_Chain.run_insert()
         self.DB_LLM_Chain.run_insert()
 
         print("Upload Complete")
