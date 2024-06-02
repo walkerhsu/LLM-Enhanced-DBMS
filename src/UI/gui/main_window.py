@@ -101,7 +101,7 @@ class MainWindow(ctk.CTk):
             self.Logo = MongoDB_Logo(self)
             self.switch_mySQL_button.grid()
             self.switch_mongodb_button.grid_remove()
-            self.login_frame.configure(width=400, height=350)
+            self.login_frame.configure(width=400, height=260)
             self.connection_label.configure(text="Connect to MongoDB")
             self.database_label.configure(text="Database")
             self.host_label.configure(text="Collection")

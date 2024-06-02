@@ -3,3 +3,4 @@ sql_config.json
 .env
 font.py
 pdf/
+.DS_Store
