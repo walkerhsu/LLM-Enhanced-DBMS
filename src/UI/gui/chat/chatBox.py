@@ -11,7 +11,7 @@ class ChatBox(ctk.CTkScrollableFrame):
         self.message_width=550
         self.message_count = 0
         
-        self.add_message("Hello, I am your agent. How can I help you? Hello, I am your agent. How can I help you? ", "bot")
+        self.add_message("Hello, I am your agent. How can I help you?", "bot")
         
     def add_message(self, msg:str, sender:str):
 

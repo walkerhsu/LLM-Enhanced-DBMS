@@ -33,12 +33,10 @@ class MainWindow(ctk.CTk):
 
         self.hotkeys = HotKeys(self)
         self.Logo = SQL_Logo(self)
-        # self.MongoDB_Logo = MongoDB_Logo(self)
-        # self.MongoDB_Logo.grid_remove()
         
         self.login_frame = ctk.CTkFrame(self, width=400, height=350)
         self.login_frame.grid_propagate(False)
-        self.login_frame.grid(row=1, column=1, padx=(300, 350), pady=0)
+        self.login_frame.grid(row=1, column=1)
         self.login_frame.grid_columnconfigure(0, weight=1)
         self.login_frame.grid_columnconfigure(1, weight=1)
 
@@ -84,8 +82,8 @@ class MainWindow(ctk.CTk):
 
     def switch_login_page(self):
         if not self.switch_mongodb_button.winfo_ismapped():
-            # self.Logo.grid()
-            # self.MongoDB_Logo.grid_remove()
+            self.Logo.remove_logo()
+            self.Logo = SQL_Logo(self)
             self.switch_mongodb_button.grid()
             self.switch_mySQL_button.grid_remove()
             self.login_frame.configure(width=400, height=350)
@@ -99,8 +97,8 @@ class MainWindow(ctk.CTk):
             self.password_label.configure(text="Password")
             self.login_button.configure(command=self.handle_SQL_login)
         else:
-            # self.Logo.grid_remove()
-            # self.MongoDB_Logo.grid()
+            self.Logo.remove_logo()
+            self.Logo = MongoDB_Logo(self)
             self.switch_mySQL_button.grid()
             self.switch_mongodb_button.grid_remove()
             self.login_frame.configure(width=400, height=350)
@@ -119,7 +117,6 @@ class MainWindow(ctk.CTk):
         self.grid_rowconfigure(0, weight=3, minsize=100)
         self.grid_rowconfigure(1, weight=5, minsize=300)
         self.grid_rowconfigure(2, weight=3, minsize=40)
-        self.grid_columnconfigure(0, weight=3, minsize=100)
         self.grid_columnconfigure(1, weight=8, minsize=570)
         self.grid_columnconfigure(2, weight=1, minsize=120)
 
@@ -180,8 +177,8 @@ class MainWindow(ctk.CTk):
         
         host = "127.0.0.1"
         user = "root"
-        password = "cheesecake"
-        database = "k"
+        password = "jessy0129!"
+        database = "interview"
         port = "3306"
 
         SQL_config = {
