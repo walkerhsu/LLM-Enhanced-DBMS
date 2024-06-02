@@ -9,7 +9,8 @@ import re
 from utils.correct_unmatched_bracklets import correct_unmatched_brackets
 
 QUERY_TEMPLATES = [
-    """Based on the data structure below, write a MongoDB command that could answer the user's question by querying the db.{collection_name}:
+    """Based on the data structure of template data below, write a MongoDB command that could answer the user's question by querying the db.{collection_name}.
+Template Data: 
 {template_data}
 
 Question: {question}
@@ -23,9 +24,10 @@ Here are some common MongoDB query commands:
 - db.{collection_name}.update_many()
 Please put all keys and values in double quotes.
 You can write multiple commands in one line by separating them with a comma if needed.
-Please use $ne operator to exclude the data with the attribute "special_dataType" = template_data" in your command every time you find, upload, or count.
+You must use $ne operator to exclude the data with the attribute "special_dataType" = template_data" in your command every time you find, upload, or count.
 MongoDB command:""" , 
-    """Based on the data structure, question, sql query, and sql response below, write a natural language response:
+    """Based on the data structure of template data, question, sql query, and sql response below, write a natural language response:
+Template Data: 
 {template_data}
 
 Question: {question}
@@ -42,8 +44,8 @@ Output:""" ,
 ]
 
 EXTRACT_UPDATE_TEMPLATES = [
-    """Please extract all updated key-value pairs from the Input and return the output as a list of JSON object.
-User Data: {data}
+    """Please extract all updated key-value pairs from the Input MongoDB command and return the output as a list of JSON object.
+Input MongoDB command: {data}
 Please ignore the attribute "special_dataType" in your output.
 Output:""" ,
 ]
@@ -130,7 +132,7 @@ class MongoDB_Chain:
                     type_value = str(type(value)).replace("<class '", "").replace("'>", "")
                     collection.update_one({"special_dataType": "template_data"}, {"$set": {key: f"{type_value}_type_value"}})
 
-        print(command)
+        print("Command: ", command)
         # This could be extremely dangerous for prompt injection attack!!!
         try:
             local_vars = {}
@@ -194,6 +196,8 @@ class MongoDB_Chain:
         # Use re.sub with the pattern and replacer function
         command = re.sub(pattern, replacer, command)
         command = command.replace('""', '"')
+        command = command.replace("'\"", '"')
+        command = command.replace("\"'", '"')
         command = command.replace("findOne", "find_one")
         command = command.replace("updateOne", "update_one")
         command = command.replace("updateMany", "update_many")
