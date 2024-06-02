@@ -51,12 +51,12 @@ class FileDialog(ctk.CTkFrame):
             self.attr_entry = ctk.CTkEntry(self, font=(self.master.font, 15))
             self.attr_entry.grid(row=5, column=1, padx=5, pady=5)
             self.attr_entry.grid_remove()
+            self.attr_entry.bind("<Return>", self.upload)  # Send message on Enter key press
+
 
     def translate(self, filename:str):
         self._filename = filename
         self._transcription = ""
-        # if not self._filename == "/Users/walker/台大課程大三下/資料庫/LLM-Enhanced-DBMS/audio/test.mp3":
-        #     return
         if self._filename.endswith(".mp3") or self._filename.endswith(".wav"):
             audio_file = open(self._filename, "rb")
             self._transcription = self.openAI_client.audio.transcriptions.create(
@@ -98,7 +98,7 @@ class FileDialog(ctk.CTkFrame):
             self.attr_label.grid()
             self.attr_entry.grid()
 
-    def upload(self):
+    def upload(self, event=None):
         if self._transcription is None:
             print("Error: No file selected")
             return

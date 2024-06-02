@@ -1,6 +1,7 @@
 customtkinter
 CTkMessagebox
 mysql-connector-python==8.0.33
+pymongo
 python-dotenv
 openai
 Pillow

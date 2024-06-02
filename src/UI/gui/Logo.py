@@ -10,6 +10,9 @@ class SQL_Logo(ctk.CTkFrame):
         self.logo = ctk.CTkLabel(self.master, image=self.my_image, text="")
         self.logo.grid(row=0, column=0, padx=10, pady=10)
 
+    def remove_logo(self):
+        self.logo.grid_remove()
+
 class MongoDB_Logo(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk) -> None:
         super().__init__(master)
@@ -18,3 +21,6 @@ class MongoDB_Logo(ctk.CTkFrame):
                                   size=(70, 50))
         self.logo = ctk.CTkLabel(self.master, image=self.my_image, text="")
         self.logo.grid(row=0, column=0, padx=10, pady=10)
+        
+    def remove_logo(self):
+        self.logo.grid_remove()
