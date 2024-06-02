@@ -2,7 +2,7 @@ Q: How many students are there that study in National Taiwan University?
 
 Q: Add a creativity score 3 to all students in National Young University.
 
-Q: Please change a student's creative score to 10.
+Q: Please change the creative score of a student to 10.
 
 Q: Who is the student in National Young University with the highest imaginative_score?
 

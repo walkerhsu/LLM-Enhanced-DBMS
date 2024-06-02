@@ -23,6 +23,7 @@ Here are some common MongoDB query commands:
 - db.{collection_name}.update_many()
 Please put all keys and values in double quotes.
 You can write multiple commands in one line by separating them with a comma if needed.
+Please use $ne operator to exclude the data with the attribute "special_dataType" = template_data" in your command every time you find, upload, or count.
 MongoDB command:""" , 
     """Based on the data structure, question, sql query, and sql response below, write a natural language response:
 {template_data}
@@ -37,6 +38,13 @@ UPLOAD_TEMPLATES = [
 {desired_attr}.
 User Data: {data}
 
+Output:""" ,
+]
+
+EXTRACT_UPDATE_TEMPLATES = [
+    """Please extract all updated key-value pairs from the Input and return the output as a list of JSON object.
+User Data: {data}
+Please ignore the attribute "special_dataType" in your output.
 Output:""" ,
 ]
 
@@ -58,9 +66,15 @@ class MongoDB_Chain:
             | StrOutputParser()
         )
 
+        self.extract_upload_chain = (
+            self.extract_upload_chain
+            | self.llm.bind(stop=["\nOutput:"])
+            | StrOutputParser()
+        )
+
         # query chain
         self.query_forward_chain = (
-            RunnablePassthrough.assign(template_data=self.get_template)
+            RunnablePassthrough.assign(template_data=self.get_template_withType)
             | self.query_prompt
             | self.llm.bind(stop=["\nSQLResult:"])
             | StrOutputParser()
@@ -88,13 +102,35 @@ class MongoDB_Chain:
         template_data = collection.find_one({"special_dataType": "template_data"}, {"_id": 0, "special_dataType": 0})
         return template_data
     
+    def get_template_withType(self, e):
+        collection = self.client[self.db_name][self.collection_name]
+        template_data = collection.find_one({"special_dataType": "template_data"}, {"_id": 0})
+        return template_data
+    
     def run_commands(self, command:str):
         # db would be used in the exec function
         # db = self.client[self.db_name]
         command = self.filter_command(command)
-        print(command)
         command = correct_unmatched_brackets(command)
 
+        if "update_one" in command or "update_many" in command:
+            collection = self.client[self.db_name][self.collection_name]
+            extract_data = self.extract_upload_chain.invoke({"data": command})
+            extract_data = json.loads(extract_data)
+            print(extract_data)
+            # if template_data doesn't exist, insert one
+            if collection.count_documents({"special_dataType": "template_data"}) == 0:
+                collection.insert_one({"special_dataType": "template_data"})
+        
+            # update template_data to keep up the full key space
+            for data in extract_data:
+                for key, value in data.items():
+                    if key == "special_dataType":
+                        continue
+                    type_value = str(type(value)).replace("<class '", "").replace("'>", "")
+                    collection.update_one({"special_dataType": "template_data"}, {"$set": {key: f"{type_value}_type_value"}})
+
+        print(command)
         # This could be extremely dangerous for prompt injection attack!!!
         try:
             local_vars = {}
@@ -108,7 +144,6 @@ class MongoDB_Chain:
         
         except Exception as e:
             return str(e)
-
         
     
     def run_upload_chain(self, data:str, desired_attr:str):
@@ -121,6 +156,8 @@ class MongoDB_Chain:
     def run_insert(self, edited_data:str):
         collection = self.client[self.db_name][self.collection_name]
         edited_data = json.loads(edited_data)
+        for data in edited_data:
+            data["special_dataType"] = "None"
 
         # if template_data doesn't exist, insert one
         if collection.count_documents({"special_dataType": "template_data"}) == 0:
@@ -128,8 +165,11 @@ class MongoDB_Chain:
         
         # update template_data to keep up the full key space
         for data in edited_data:
-            for key, _ in data.items():
-                collection.update_one({"special_dataType": "template_data"}, {"$set": {key: f"{key}_value"}})
+            for key, value in data.items():
+                if key == "special_dataType":
+                    continue
+                type_value = str(type(value)).replace("<class '", "").replace("'>", "")
+                collection.update_one({"special_dataType": "template_data"}, {"$set": {key: f"{type_value}_type_value"}})
 
         collection.insert_many(edited_data)
 
@@ -143,6 +183,7 @@ class MongoDB_Chain:
         self.extract_prompt = ChatPromptTemplate.from_template(UPLOAD_TEMPLATES[0])
         self.query_prompt = ChatPromptTemplate.from_template(QUERY_TEMPLATES[0])
         self.execute_prompt = ChatPromptTemplate.from_template(QUERY_TEMPLATES[1])
+        self.extract_upload_chain = ChatPromptTemplate.from_template(EXTRACT_UPDATE_TEMPLATES[0])
 
     def filter_command(self, command:str):
         pattern = r'\$(\w+)'
@@ -180,40 +221,3 @@ class MongoDB_Chain:
                 i += count_append
             
             i += 1
-        
-
-# def main():
-#     with open("./MongoDB_connection/mongoDB_config.json", "r") as f:
-#         config = json.load(f)
-#     chain = MongoDB_Chain(config=config)
-#     chain.run_upload_chain("""David is a student in the National Taiwan University. His major is EE.
-#                            Walker is also a student in the National Taiwan University. He has two majors, which are EE and FL.""")
-    
-#     chain.run_upload_chain("""In National Young University, a diverse group of students brought unique talents and personalities to the table. 
-#                            Maria, a budding artist with a flair for painting, often dazzled her classmates with her colorful and imaginative artwork. 
-#                            Next to her sat Jamal, the class math whiz, whose quick thinking and problem-solving skills made him a favorite in group projects. 
-#                            Emily, known for her love of reading, could always be found with her nose in a book, ready to share fascinating facts or stories with her friends. 
-#                            At the back of the room, Ravi, a natural leader and soccer enthusiast, organized impromptu games during recess and encouraged teamwork among his peers. 
-#                            Finally, there's Sophie, whose knack for storytelling and drama made her the star of every school play, captivating audiences with her expressive performances. Together, these five students created a vibrant and dynamic classroom environment where creativity, intellect, and camaraderie thrived.""")
-    
-#     print("\nQ: What is the major of David?")
-#     chain.run_query_chain("What is the major of David?")
-
-#     print("\nQ: How many students are there that study in National Taiwan University?")
-#     chain.run_query_chain("How many students are there that study in National Taiwan University?")
-
-#     print("\nQ: Choose a number from 1 ~ 5 for me, and add it as a creativity score to each student in National Young University.")
-#     chain.run_query_chain("Choose a number from 1 ~ 5 for me, and add it as a creativity score to each student in National Young University.")
-
-#     print("\nQ: Please change a student's creative score to 10.")
-#     chain.run_query_chain("Please change a student's creative score to 10.")
-
-#     print("\nQ: Who is the student in National Young University with the highest imaginative_score?")
-#     chain.run_query_chain("Who is the student in National Young University with the highest imaginative_score?")
-
-#     print("\nQ: David has a major in EE. Who else has a major in EE?")
-#     chain.run_query_chain("David has a major in EE. Who else has a major in EE?")
-    
-
-# if __name__ == "__main__":
-#     main()
