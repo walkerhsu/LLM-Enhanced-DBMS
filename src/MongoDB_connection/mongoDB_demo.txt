@@ -1,9 +1,5 @@
-Q: How many students are there that study in National Taiwan University?
+Q: Give a creativity score 3 to all students in National Young University.
 
-Q: Add a creativity score 3 to all students in National Young University.
-
-Q: Please change the creative score of a student to 10.
+Q: Please choose one student in National Young University, and change the creative score of him to 10.
 
 Q: Who is the student in National Young University with the highest imaginative_score?
-
-Q: David has a major in EE. Who else has a major in EE?
