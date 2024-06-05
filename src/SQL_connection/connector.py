@@ -3,7 +3,7 @@ import json
 import mysql.connector
 
 class SQLConnector:
-    def __init__(self, config) -> None:
+    def __init__(self, config:dict) -> None:
         self.config = config
         self.get_sql_config()
         self.create_database()
@@ -24,6 +24,15 @@ class SQLConnector:
         # print(databases)
         cursor.close()
         mydb.close()
+
+    def run_select(self, query:str):
+        mydb = mysql.connector.connect(user=self.user, password=self.passwd, port=self.port, host=self.host, database=self.database)
+        cursor = mydb.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        mydb.close()
+        return result
 
 
 def main():
