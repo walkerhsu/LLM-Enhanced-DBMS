@@ -192,13 +192,7 @@ class MainWindow(ctk.CTk):
         password = self.password_entry.get()
         database = self.database_entry.get()
         port = self.port_entry.get()
-
-        host = "127.0.0.1"
-        user = "root"
-        password = "jessy0129!"
-        database = "interview"
-        port = "3306"
-
+        
         SQL_config = {
             "host": host,
             "user": user,

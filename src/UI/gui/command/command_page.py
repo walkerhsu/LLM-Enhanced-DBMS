@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from SQL_connection.connector import SQLConnector
+from MongoDB_connection.connector import MongoDBConnector
 
 # from SQLchain import DB_LLM_Chain
 class CommandPage(ctk.CTkFrame):
@@ -8,7 +9,7 @@ class CommandPage(ctk.CTkFrame):
         self.grid(row=1, column=1, padx=20, pady=20, ipadx=20, ipady=20, sticky="nesw")
         if DB_type == "MongoDB":
             pass
-            # self.connector = MongoDBConnector(config=config)
+            self.connector = MongoDBConnector(config=config)
         elif DB_type == "SQL":
             self.connector = SQLConnector(config=config)
         self.grid_columnconfigure(0, weight=1)
