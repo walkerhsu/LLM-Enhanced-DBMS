@@ -203,25 +203,3 @@ class MongoDB_Chain:
         command = command.replace("updateMany", "update_many")
 
         return command
-    
-    def correct_unmatched_brackets(self, command:str):
-        # brackets type: (), {}, []
-        stack = []
-        i = 0
-        while i < len(command):
-            if command[i] == "(":
-                stack.append("(")
-            elif command[i] == "{":
-                stack.append("{")
-            elif command[i] == "[":
-                stack.append("[")
-
-            if command[i] == ")" or command[i] == "}" or command[i] == "]":
-                count_append = 0
-                while stack[-1] != command[i]:
-                    command = command[:i] + stack[-1] + command[i:]
-                    count_append += 1
-                    stack.pop()
-                i += count_append
-            
-            i += 1

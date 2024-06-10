@@ -139,7 +139,7 @@ class FileDialog(ctk.CTkFrame):
         self.uploadStateLabel.grid_remove()
         
     
-        self.uploadStateLabel.configure(text=extract_data)
+        # self.uploadStateLabel.configure(text=extract_data)
         self.confirmButton = ctk.CTkButton(self, text="Upload", command=self.confirm_upload, font=(self.master.font, 16))
         self.confirmButton.grid(row=4, column=0, padx=20, pady=20, sticky='n')
 
@@ -151,6 +151,7 @@ class FileDialog(ctk.CTkFrame):
         self.pdfButton.configure(state="normal")
 
     def confirm_upload(self):
+        self.editableTextBox.grid_remove()
         self.uploadStateLabel.configure(text="Uploading...")
         self.confirmButton.grid_remove()
         self.confirmButton = None
@@ -176,7 +177,8 @@ class FileDialog(ctk.CTkFrame):
 
 
     def cancel_upload(self):
-        self.uploadStateLabel.grid_remove()
+        # self.uploadStateLabel.grid_remove()
+        self.editableTextBox.grid_remove()
         self.confirmButton.grid_remove()
         self.confirmButton = None
         self.cancelButton.grid_remove()

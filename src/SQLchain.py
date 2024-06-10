@@ -1,5 +1,4 @@
 import json
-from SQL_connection.connector import SQLConnector
 from langchain_community.utilities import SQLDatabase
 
 
@@ -40,7 +39,6 @@ SQL Query:""" ,
 class SQL_Chain:
     def __init__(self, config:dict) -> None:
         self.config = config
-        self.connector = SQLConnector(config=config)
         db_uri = f"mysql+mysqlconnector://{config['user']}:{config['passwd']}@{config['host']}:{config['port']}/{config['database']}"
         print(db_uri)
         self.database = SQLDatabase.from_uri(db_uri)

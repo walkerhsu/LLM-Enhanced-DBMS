@@ -9,6 +9,7 @@ from UI.gui.upload.file_dialog import FileDialog
 from UI.gui.chat.user_input import UserInput
 from UI.gui.chat.chatBox import ChatBox
 from UI.gui.Logo import SQL_Logo, MongoDB_Logo
+from UI.gui.command.command_page import CommandPage
 import mysql
 from tkinter import messagebox
 
@@ -79,6 +80,8 @@ class MainWindow(ctk.CTk):
         self.switch_mySQL_button.grid(row=7, column=0, columnspan=2, padx=5, pady=10)
     
         self.switch_mySQL_button.grid_remove()
+        self.config = {}
+        self.DB_type = ""
 
     def switch_login_page(self):
         if not self.switch_mongodb_button.winfo_ismapped():
@@ -120,7 +123,7 @@ class MainWindow(ctk.CTk):
         self.grid_columnconfigure(1, weight=8, minsize=570)
         self.grid_columnconfigure(2, weight=1, minsize=120)
 
-        self.segmented_values = ["Upload Data", "Chat Playground"]
+        self.segmented_values = ["Upload Data", "Chat Playground", "Command Line"]
         self.segemented_button_var = ctk.StringVar(value="Upload Data")
         self.segemented_button = ctk.CTkSegmentedButton(self, values=self.segmented_values, font=(self.font, 16),
                                                             command=self.segmented_button_callback,
@@ -130,6 +133,7 @@ class MainWindow(ctk.CTk):
         self.fileDialog = FileDialog(self, self.openAI_client, self.DB_LLM_Chain)
         self.chatBox = ChatBox(self)
         self.input = UserInput(self, self.openAI_client)
+        self.commandPage = CommandPage(self, self.config, self.DB_type)
 
         self.submitButton = ctk.CTkButton(self, text="Send", command=self.submit, font=(self.font, 16), height=20, width=100)
         self.submitButton.grid(row=2, column=2, padx=(15, 20), pady=2, sticky='w')
@@ -139,6 +143,8 @@ class MainWindow(ctk.CTk):
 
     def segmented_button_callback(self, value):
         if value == "Chat Playground":
+            # remove command line grid
+            self.commandPage.remove_mul_grids()
             # remove uploading grid
             self.fileDialog.remove_mul_grids()
             # set chatting grid
@@ -150,8 +156,20 @@ class MainWindow(ctk.CTk):
             self.chatBox.grid_remove()
             self.input.remove_mul_grids()
             self.submitButton.grid_remove()
+            # remove command line grid
+            self.commandPage.remove_mul_grids()
             # set uploading grid
             self.fileDialog.set_mul_grids()
+        elif value == "Command Line":
+            # remove uploading grid
+            self.fileDialog.remove_mul_grids()
+            # remove chatting grid
+            self.chatBox.grid_remove()
+            self.input.remove_mul_grids()
+            self.submitButton.grid_remove()
+
+            # set command line grid
+            self.commandPage.set_mul_grids()
         else:
             print("Error: segmented button value not found")
             return
@@ -175,6 +193,12 @@ class MainWindow(ctk.CTk):
         database = self.database_entry.get()
         port = self.port_entry.get()
 
+        host = "127.0.0.1"
+        user = "root"
+        password = "jessy0129!"
+        database = "interview"
+        port = "3306"
+
         SQL_config = {
             "host": host,
             "user": user,
@@ -182,7 +206,8 @@ class MainWindow(ctk.CTk):
             "database": database,
             "port": port
         }
-
+        self.config = SQL_config
+        self.DB_type = "SQL"
 
         try:
             self.DB_LLM_Chain = SQL_Chain(SQL_config)
@@ -216,6 +241,9 @@ class MainWindow(ctk.CTk):
             "collection": collection,
             "connection_string": connection_string
         }
+
+        self.config = mongoDB_config
+        self.DB_type = "MongoDB"
 
         try:
             self.DB_LLM_Chain = MongoDB_Chain(mongoDB_config)
