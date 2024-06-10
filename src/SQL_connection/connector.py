@@ -25,7 +25,7 @@ class SQLConnector:
         cursor.close()
         mydb.close()
 
-    def run_select(self, query:str):
+    def run_query(self, query:str):
         mydb = mysql.connector.connect(user=self.user, password=self.passwd, port=self.port, host=self.host, database=self.database)
         cursor = mydb.cursor()
         cursor.execute(query)
@@ -33,6 +33,15 @@ class SQLConnector:
         cursor.close()
         mydb.close()
         return result
+    
+    def run_modify(self, modify:str):
+        mydb = mysql.connector.connect(user=self.user, password=self.passwd, port=self.port, host=self.host, database=self.database)
+        cursor = mydb.cursor()
+        cursor.execute(modify)
+        mydb.commit()
+        cursor.close()
+        mydb.close()
+
 
 
 def main():

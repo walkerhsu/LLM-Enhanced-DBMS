@@ -28,13 +28,24 @@ class CommandPage(ctk.CTkFrame):
         self.command_output.configure(state="disabled")
 
     def run_command(self, event):
-        self.command_output.delete("1.0", "end")
         command = self.command.get()
-        result = self.connector.run_select(query=command)
         self.command_output.configure(state="normal")
-        for row in result:
-            self.command_output.insert("end", f"{row}\n")
+        self.command_output.delete("1.0", "end")
+        if command.strip().split()[0].lower() == "select" or command.strip().split()[0].lower() == "show" or command.strip().split()[0].lower() == "describe":
+            try:
+                result = self.connector.run_query(query=command)
+                for row in result:
+                    self.command_output.insert("end", f"{row}\n")
+            except Exception as e:
+                self.command_output.insert("end", f"Error: {e}\n")
+        else:
+            try:
+                self.connector.run_modify(modify=command)
+                self.command_output.insert("end", "Command executed successfully\n")
+            except Exception as e:
+                self.command_output.insert("end", f"Error: {e}\n")
         self.command_output.configure(state="disabled")
+        self.command.delete(0, "end")
     
     def remove_mul_grids(self):
         self.grid_remove()
